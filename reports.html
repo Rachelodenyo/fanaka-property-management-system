@@ -1,0 +1,628 @@
+
+raw
+07 reports · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fanaka PMS – Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0D1F3C;--navy-light:#1E3A6E;--accent:#2563EB;
+  --gold:#F59E0B;--success:#10B981;--danger:#EF4444;--white:#FFFFFF;
+  --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+  --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+  --gray-600:#475569;--gray-700:#334155;
+  --radius:10px;--radius-lg:16px;--sidebar-w:252px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-700);min-height:100vh}
+ 
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-brand{padding:26px 22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:40px;height:40px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px}
+.brand-name{font-family:'DM Serif Display',serif;font-size:17px;color:var(--white);line-height:1.15;display:block}
+.brand-tag{font-size:10px;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase}
+.nav{flex:1;padding:14px 10px}
+.nav-section{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.58);font-size:13.5px;font-weight:500;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:var(--accent);color:var(--white)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:9px}
+.ava{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--white);flex-shrink:0}
+.user-name{font-size:13px;font-weight:600;color:var(--white)}
+.user-role{font-size:10.5px;color:rgba(255,255,255,.38)}
+.btn-logout{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.35);padding:5px;border-radius:6px;line-height:0;transition:color .15s}
+.btn-logout:hover{color:var(--danger)}
+.btn-logout svg{width:16px;height:16px}
+ 
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--gray-200);height:66px;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:23px;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-date{font-size:13px;color:var(--gray-400)}
+.page{padding:30px 32px}
+ 
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.section-hd h2{font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy)}
+.section-hd p{font-size:13px;color:var(--gray-400);margin-top:3px}
+.section-hd-actions{display:flex;gap:10px;align-items:center}
+ 
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all .15s}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:var(--navy);color:var(--white)}
+.btn-primary:hover{background:var(--navy-light)}
+.btn-outline{background:var(--white);color:var(--gray-600);border:1.5px solid var(--gray-200)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:7px 14px;font-size:12.5px}
+ 
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:22px;position:relative;overflow:hidden;transition:box-shadow .2s}
+.kpi-card:hover{box-shadow:0 6px 22px rgba(13,31,60,.09)}
+.kpi-card-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.kpi-label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.kpi-val{font-size:28px;font-weight:700;color:var(--navy);line-height:1;margin-bottom:6px}
+.kpi-sub{font-size:12px;color:var(--gray-400)}
+.kpi-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);opacity:.08}
+.kpi-icon svg{width:52px;height:52px}
+ 
+/* ── CHART ROW ── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden}
+.card-header{padding:18px 22px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:15px;font-weight:600;color:var(--navy)}
+.card-body{padding:20px 22px}
+ 
+/* ── BAR CHART (pure CSS) ── */
+.bar-chart{display:flex;flex-direction:column;gap:12px}
+.bar-row{display:flex;align-items:center;gap:12px}
+.bar-label{width:90px;font-size:12px;color:var(--gray-600);text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:10px;background:var(--gray-100);border-radius:99px;overflow:hidden}
+.bar-fill{height:10px;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-val{font-size:12px;font-weight:600;color:var(--navy);width:80px;flex-shrink:0}
+ 
+/* ── STATUS DONUT (CSS) ── */
+.donut-wrap{display:flex;align-items:center;gap:24px;justify-content:center;padding:10px 0}
+.donut-svg{flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-name{flex:1;color:var(--gray-600)}
+.legend-val{font-weight:700;color:var(--navy)}
+.legend-pct{font-size:11px;color:var(--gray-400);margin-left:4px}
+ 
+/* ── OCCUPANCY BARS ── */
+.occ-list{display:flex;flex-direction:column;gap:14px}
+.occ-item-row{display:flex;align-items:center;gap:12px}
+.occ-name{font-size:13px;font-weight:500;color:var(--navy);width:160px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.occ-track{flex:1;height:10px;background:var(--gray-100);border-radius:99px;overflow:hidden}
+.occ-fill{height:10px;border-radius:99px;transition:width .8s}
+.occ-pct{font-size:12px;font-weight:700;width:36px;flex-shrink:0;text-align:right}
+ 
+/* ── SUMMARY TABLES ── */
+.tbl-wrap{overflow-x:auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{text-align:left;position: sticky;top: 0;z-index: 10;padding:10px 16px;font-size:10.5px;font-weight:600;color:var(--gray-400);letter-spacing:.08em;text-transform:uppercase;background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--gray-50)}
+tbody td{padding:12px 16px;color:var(--gray-600);vertical-align:middle}
+tbody td strong{color:var(--navy);font-weight:600}
+tfoot td{padding:11px 16px;font-weight:700;color:var(--navy);font-size:13.5px;border-top:2px solid var(--gray-200);background:var(--gray-50)}
+ 
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600}
+.pill-green{background:#F0FDF4;color:#166534}
+.pill-red{background:#FFF1F2;color:#991B1B}
+.pill-gold{background:#FFFBEB;color:#92400E}
+ 
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:40px;color:var(--gray-400);font-size:13px}
+ 
+/* ── TESTING TABLE ── */
+.test-section{margin-top:22px}
+.test-section h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:6px}
+.test-section p{font-size:13px;color:var(--gray-400);margin-bottom:16px}
+.pass-badge{display:inline-flex;align-items:center;gap:4px;background:#F0FDF4;color:#166534;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:99px}
+.fail-badge{display:inline-flex;align-items:center;gap:4px;background:#FFF1F2;color:#991B1B;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:99px}
+ 
+/* ── PRINT ── */
+@media print{
+  .sidebar,.topbar,.no-print{display:none!important}
+  .main{margin-left:0}
+  .page{padding:10px}
+  .kpi-card:hover{box-shadow:none}
+  body{background:white}
+}
+ 
+@media(max-width:1100px){.chart-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.page{padding:20px 16px}.kpi-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+ 
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.552 20.552 21 20 21H4C3.448 21 3 20.552 3 20V9.5Z" fill="#0D1F3C"/><path d="M9 21V13H15V21" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div><span class="brand-name">Fanaka PMS</span><span class="brand-tag">Admin Portal</span></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <div class="nav-section">Management</div>
+    <a href="properties.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Properties
+    </a>
+    <a href="tenants.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Tenants
+    </a>
+    <a href="payments.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Rent Payments
+    </a>
+    <a href="leases.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Leases
+    </a>
+    <div class="nav-section">Reports</div>
+    <a href="reports.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="ava">AD</div>
+      <div style="flex:1;min-width:0"><div class="user-name">Admin User</div><div class="user-role">System Administrator</div></div>
+      <button class="btn-logout" onclick="if(confirm('Sign out?'))location.href='login.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+ 
+<!-- ════ MAIN ════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Reports &amp; Analytics</div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="tbDate"></div>
+      <button class="btn btn-outline btn-sm no-print" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print Report
+      </button>
+    </div>
+  </div>
+ 
+  <div class="page">
+ 
+    <!-- Section Header -->
+    <div class="section-hd">
+      <div>
+        <h2>System Reports</h2>
+        <p>Financial overview, occupancy analysis and performance summary</p>
+      </div>
+      <div class="section-hd-actions no-print">
+        <span style="font-size:13px;color:var(--gray-400)">Generated: <span id="genDate"></span></span>
+      </div>
+    </div>
+ 
+    <!-- ── KPI CARDS ── -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--accent)"></div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <div class="kpi-label">Total Properties</div>
+        <div class="kpi-val" id="kpi-props">0</div>
+        <div class="kpi-sub">Registered in system</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--success)"></div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div class="kpi-label">Total Tenants</div>
+        <div class="kpi-val" id="kpi-tenants">0</div>
+        <div class="kpi-sub">Registered tenants</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--gold)"></div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-val" id="kpi-revenue" style="font-size:20px">KES 0</div>
+        <div class="kpi-sub">All paid payments</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--danger)"></div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="kpi-label">Overdue Rent</div>
+        <div class="kpi-val" id="kpi-overdue">0</div>
+        <div class="kpi-sub">Payments not received</div>
+      </div>
+    </div>
+ 
+    <!-- Second row KPIs -->
+    <div class="kpi-grid" style="margin-bottom:24px">
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:#7C3AED"></div>
+        <div class="kpi-label">Occupancy Rate</div>
+        <div class="kpi-val" id="kpi-occ">0%</div>
+        <div class="kpi-sub" id="kpi-occ-sub">Tenants vs total units</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--success)"></div>
+        <div class="kpi-label">Active Leases</div>
+        <div class="kpi-val" id="kpi-leases">0</div>
+        <div class="kpi-sub">Currently running</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--gold)"></div>
+        <div class="kpi-label">Expiring Soon</div>
+        <div class="kpi-val" id="kpi-expiring">0</div>
+        <div class="kpi-sub">Within 30 days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background:var(--accent)"></div>
+        <div class="kpi-label">Collection Rate</div>
+        <div class="kpi-val" id="kpi-collect-rate">0%</div>
+        <div class="kpi-sub">Paid vs total payments</div>
+      </div>
+    </div>
+ 
+    <!-- ── CHARTS ROW ── -->
+    <div class="chart-row">
+ 
+      <!-- Payment Status Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Payment Status Breakdown</h3>
+        </div>
+        <div class="card-body">
+          <div class="donut-wrap" id="donutWrap">
+            <div class="empty">No payment data yet.</div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Property Occupancy Bars -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Property Occupancy</h3>
+        </div>
+        <div class="card-body">
+          <div class="occ-list" id="occList">
+            <div class="empty">No properties added yet.</div>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+ 
+    <!-- ── REVENUE BY MONTH (bar chart) ── -->
+    <div class="card" style="margin-bottom:22px">
+      <div class="card-header">
+        <h3>Revenue by Month</h3>
+        <span style="font-size:12px;color:var(--gray-400)">Paid payments only</span>
+      </div>
+      <div class="card-body">
+        <div class="bar-chart" id="revenueChart">
+          <div class="empty">Record payments to see monthly revenue.</div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ── TENANT PAYMENT SUMMARY ── -->
+    <div class="card" style="margin-bottom:22px">
+      <div class="card-header">
+        <h3>Tenant Payment Summary</h3>
+        <span style="font-size:12px;color:var(--gray-400)">All-time record per tenant</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Tenant</th><th>Unit</th><th>Property</th>
+              <th>Total Paid</th><th>Payments</th><th>Overdue</th><th>Last Payment</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tenSummaryTbody"></tbody>
+          <tfoot id="tenSummaryFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+ 
+    <!-- ── PROPERTY SUMMARY ── -->
+    <div class="card" style="margin-bottom:22px">
+      <div class="card-header">
+        <h3>Property Summary</h3>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Property Name</th><th>Type</th><th>Location</th>
+              <th>Total Units</th><th>Tenants</th><th>Occupancy</th><th>Expected Rent</th>
+            </tr>
+          </thead>
+          <tbody id="propSummaryTbody"></tbody>
+        </table>
+      </div>
+    </div>
+ 
+    <!-- ── SYSTEM TESTING TABLE ── -->
+    <div class="card test-section" style="overflow:hidden">
+      <div class="card-header">
+        <h3>System Testing Results — Table 6.1</h3>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Test #</th><th>Module</th><th>Test Action</th>
+                <th>Expected Result</th><th>Actual Result</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>T-01</td><td>Login</td><td>Submit with wrong password</td><td>Red error message shown</td><td>Error message displayed correctly</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-02</td><td>Login</td><td>Submit with correct credentials</td><td>Redirected to Dashboard</td><td>Dashboard loads successfully</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-03</td><td>Login</td><td>Click "Forgot Password"</td><td>3-step modal opens</td><td>Modal opens with step indicator</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-04</td><td>Login</td><td>Show Password checkbox</td><td>Password becomes visible</td><td>Password field type toggles</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-05</td><td>Properties</td><td>Submit empty Add form</td><td>Validation error displayed</td><td>Toast error message shown</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-06</td><td>Properties</td><td>Add valid property record</td><td>Record appears in table</td><td>Property saved and table updated</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-07</td><td>Properties</td><td>Click Edit on a record</td><td>Form opens pre-filled</td><td>All fields populated correctly</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-08</td><td>Properties</td><td>Click Delete on a record</td><td>Confirmation dialog appears</td><td>Dialog shown before deletion</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-09</td><td>Tenants</td><td>Add tenant with property link</td><td>Tenant saved with assignment</td><td>Tenant record created correctly</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-10</td><td>Tenants</td><td>View tenant profile</td><td>Detail modal opens</td><td>All tenant details displayed</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-11</td><td>Payments</td><td>Record payment as Paid</td><td>Dashboard stat updates</td><td>Rent Collected card increases</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-12</td><td>Payments</td><td>Record payment as Overdue</td><td>Overdue counter increases</td><td>Overdue count updated correctly</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-13</td><td>Payments</td><td>Click Receipt on payment</td><td>Receipt modal opens</td><td>Full receipt details displayed</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-14</td><td>Leases</td><td>Add lease with valid dates</td><td>Lease saved with expiry chip</td><td>Lease record created with days left</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-15</td><td>Leases</td><td>Renew an expiring lease</td><td>New end date saved</td><td>Lease status reset to Active</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-16</td><td>Reports</td><td>View after adding data</td><td>All stats reflect data</td><td>KPIs, charts and tables populated</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-17</td><td>Search</td><td>Type name in search box</td><td>Table filters live</td><td>Matching rows shown instantly</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-18</td><td>Navigation</td><td>Click sidebar links</td><td>Correct page loads</td><td>All navigation links functional</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-19</td><td>Data</td><td>Refresh browser</td><td>Data still present</td><td>localStorage persists all records</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+              <tr><td>T-20</td><td>Reports</td><td>Click Print Report</td><td>Print dialog opens</td><td>Clean print layout rendered</td><td><span class="pass-badge">✓ Pass</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<script>
+/* ── DATA LAYER ── */
+const DB={
+  properties: ()=>{ try{return JSON.parse(localStorage.getItem('fpms_properties'))||[];}catch(e){return[];} },
+  tenants:    ()=>{ try{return JSON.parse(localStorage.getItem('fpms_tenants'))   ||[];}catch(e){return[];} },
+  payments:   ()=>{ try{return JSON.parse(localStorage.getItem('fpms_payments'))  ||[];}catch(e){return[];} },
+  leases:     ()=>{ try{return JSON.parse(localStorage.getItem('fpms_leases'))    ||[];}catch(e){return[];} },
+};
+ 
+function fmtKES(n){ return 'KES '+Number(n||0).toLocaleString('en-KE'); }
+function daysLeft(d){ return Math.ceil((new Date(d)-new Date())/86400000); }
+ 
+/* ── DATE ── */
+const now = new Date();
+document.getElementById('tbDate').textContent =
+  now.toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+document.getElementById('genDate').textContent =
+  now.toLocaleString('en-KE',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+ 
+/* ── RENDER EVERYTHING ── */
+function renderAll(){
+  const props    = DB.properties();
+  const tenants  = DB.tenants();
+  const payments = DB.payments();
+  const leases   = DB.leases();
+ 
+  /* ── KPI ROW 1 ── */
+  document.getElementById('kpi-props').textContent   = props.length;
+  document.getElementById('kpi-tenants').textContent = tenants.length;
+  const totalRev = payments.filter(p=>p.status==='Paid').reduce((s,p)=>s+Number(p.amount),0);
+  document.getElementById('kpi-revenue').textContent = fmtKES(totalRev);
+  document.getElementById('kpi-overdue').textContent = payments.filter(p=>p.status==='Overdue').length;
+ 
+  /* ── KPI ROW 2 ── */
+  const totalUnits = props.reduce((s,p)=>s+Number(p.units||0),0);
+  const occRate    = totalUnits?Math.round(tenants.length/totalUnits*100):0;
+  document.getElementById('kpi-occ').textContent     = occRate+'%';
+  document.getElementById('kpi-occ-sub').textContent = `${tenants.length} tenants / ${totalUnits} units`;
+  const activeLeases   = leases.filter(l=>l.status==='Active');
+  document.getElementById('kpi-leases').textContent  = activeLeases.length;
+  const expiring = activeLeases.filter(l=>daysLeft(l.end)>=0&&daysLeft(l.end)<=30).length;
+  document.getElementById('kpi-expiring').textContent= expiring;
+  const paid     = payments.filter(p=>p.status==='Paid').length;
+  const collectRate = payments.length?Math.round(paid/payments.length*100):0;
+  document.getElementById('kpi-collect-rate').textContent = collectRate+'%';
+ 
+  /* ── DONUT CHART (SVG) ── */
+  renderDonut(payments);
+ 
+  /* ── OCCUPANCY BARS ── */
+  renderOccupancy(props,tenants);
+ 
+  /* ── REVENUE BY MONTH ── */
+  renderRevenueBars(payments);
+ 
+  /* ── TENANT SUMMARY TABLE ── */
+  renderTenantSummary(tenants,payments);
+ 
+  /* ── PROPERTY SUMMARY TABLE ── */
+  renderPropertySummary(props,tenants);
+}
+ 
+/* ── DONUT CHART ── */
+function renderDonut(payments){
+  const el = document.getElementById('donutWrap');
+  if(payments.length===0){ el.innerHTML='<div class="empty">No payment data yet.</div>'; return; }
+ 
+  const paid    = payments.filter(p=>p.status==='Paid').length;
+  const partial = payments.filter(p=>p.status==='Partial').length;
+  const overdue = payments.filter(p=>p.status==='Overdue').length;
+  const total   = payments.length;
+ 
+  /* SVG donut */
+  const R=60, C=2*Math.PI*R, cx=80, cy=80, r=80;
+  const segments=[
+    {val:paid,    color:'#10B981',label:'Paid'},
+    {val:partial, color:'#F59E0B',label:'Partial'},
+    {val:overdue, color:'#EF4444',label:'Overdue'},
+  ];
+  let offset=0;
+  const arcs = segments.map(s=>{
+    const pct  = total?s.val/total:0;
+    const dash = pct*C;
+    const gap  = C-dash;
+    const arc  = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${s.color}" stroke-width="22"
+      stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset += dash;
+    return arc;
+  }).join('');
+ 
+  el.innerHTML = `
+    <svg class="donut-svg" width="160" height="160" viewBox="0 0 160 160">
+      <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--gray-100)" stroke-width="22"/>
+      ${arcs}
+      <text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="22" font-weight="700" fill="var(--navy)">${total}</text>
+      <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="11" fill="var(--gray-400)">payments</text>
+    </svg>
+    <div class="donut-legend">
+      ${segments.map(s=>`
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${s.color}"></div>
+          <span class="legend-name">${s.label}</span>
+          <span class="legend-val">${s.val}</span>
+          <span class="legend-pct">(${total?Math.round(s.val/total*100):0}%)</span>
+        </div>`).join('')}
+    </div>`;
+}
+ 
+/* ── OCCUPANCY BARS ── */
+function renderOccupancy(props,tenants){
+  const el = document.getElementById('occList');
+  if(props.length===0){ el.innerHTML='<div class="empty">No properties added yet.</div>'; return; }
+  const byProp={};
+  tenants.forEach(t=>{ if(t.property) byProp[t.property]=(byProp[t.property]||0)+1; });
+  el.innerHTML = props.map(p=>{
+    const occ = byProp[p.name]||0;
+    const pct = p.units?Math.min(100,Math.round(occ/p.units*100)):0;
+    const color = pct>=80?'var(--success)':pct>=40?'var(--accent)':'var(--danger)';
+    return `<div class="occ-item-row">
+      <span class="occ-name" title="${p.name}">${p.name}</span>
+      <div class="occ-track"><div class="occ-fill" style="width:${pct}%;background:${color}"></div></div>
+      <span class="occ-pct" style="color:${color}">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+ 
+/* ── REVENUE BY MONTH BAR CHART ── */
+function renderRevenueBars(payments){
+  const el = document.getElementById('revenueChart');
+  const paid = payments.filter(p=>p.status==='Paid'&&p.month);
+  if(paid.length===0){ el.innerHTML='<div class="empty">Record payments to see monthly revenue.</div>'; return; }
+ 
+  const byMonth={};
+  paid.forEach(p=>{ byMonth[p.month]=(byMonth[p.month]||0)+Number(p.amount); });
+  const sorted = Object.entries(byMonth).sort((a,b)=>a[0].localeCompare(b[0])).slice(-8);
+  const maxVal = Math.max(...sorted.map(([,v])=>v));
+ 
+  el.innerHTML = sorted.map(([month,val])=>{
+    const pct  = maxVal?Math.round(val/maxVal*100):0;
+    const label= month.slice(0,7); // YYYY-MM
+    return `<div class="bar-row">
+      <span class="bar-label">${label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+      <span class="bar-val">${fmtKES(val).replace('KES ','')}</span>
+    </div>`;
+  }).join('');
+}
+ 
+/* ── TENANT SUMMARY TABLE ── */
+function renderTenantSummary(tenants,payments){
+  const tbody = document.getElementById('tenSummaryTbody');
+  const tfoot = document.getElementById('tenSummaryFoot');
+ 
+  if(tenants.length===0){
+    tbody.innerHTML='<tr><td colspan="9"><div class="empty">No tenants registered yet.</div></td></tr>';
+    tfoot.innerHTML='';return;
+  }
+ 
+  let grandTotal=0, grandCount=0;
+  tbody.innerHTML = tenants.map((t,i)=>{
+    const tenPays = payments.filter(p=>p.tenantId===t.id);
+    const paid    = tenPays.filter(p=>p.status==='Paid');
+    const overdue = tenPays.filter(p=>p.status==='Overdue').length;
+    const total   = paid.reduce((s,p)=>s+Number(p.amount),0);
+    const last    = paid.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+    grandTotal   += total; grandCount += paid.length;
+    const hasOverdue = overdue>0;
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${t.name}</strong></td>
+      <td>${t.unit||'—'}</td>
+      <td>${t.property||'—'}</td>
+      <td style="font-weight:700;color:var(--success)">${fmtKES(total)}</td>
+      <td style="text-align:center">${paid.length}</td>
+      <td style="text-align:center">${hasOverdue?`<span class="pill pill-red">${overdue}</span>`:'<span style="color:var(--gray-400)">0</span>'}</td>
+      <td>${last?last.date:'—'}</td>
+      <td><span class="pill ${hasOverdue?'pill-gold':'pill-green'}">${hasOverdue?'Has Overdue':'Good Standing'}</span></td>
+    </tr>`;
+  }).join('');
+ 
+  tfoot.innerHTML=`<tr>
+    <td colspan="4">TOTALS</td>
+    <td style="color:var(--success)">${fmtKES(grandTotal)}</td>
+    <td style="text-align:center">${grandCount}</td>
+    <td colspan="3"></td>
+  </tr>`;
+}
+ 
+/* ── PROPERTY SUMMARY TABLE ── */
+function renderPropertySummary(props,tenants){
+  const tbody = document.getElementById('propSummaryTbody');
+  if(props.length===0){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty">No properties registered yet.</div></td></tr>';
+    return;
+  }
+  const byProp={};
+  tenants.forEach(t=>{ if(t.property) byProp[t.property]=(byProp[t.property]||0)+1; });
+ 
+  tbody.innerHTML=props.map((p,i)=>{
+    const occ  = byProp[p.name]||0;
+    const units= Number(p.units||0);
+    const pct  = units?Math.round(occ/units*100):0;
+    const pillCls= pct>=80?'pill-green':pct>=40?'pill-gold':'pill-red';
+    const expected = occ * Number(p.rent||0);
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.type}</td>
+      <td>${p.location}</td>
+      <td style="text-align:center">${units||'—'}</td>
+      <td style="text-align:center">${occ}</td>
+      <td><span class="pill ${pillCls}">${pct}%</span></td>
+      <td style="font-weight:600;color:var(--navy)">${expected?fmtKES(expected):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+ 
+/* ── INIT ── */
+renderAll();
+</script>

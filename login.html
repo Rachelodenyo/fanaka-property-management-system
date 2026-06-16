@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fanaka PMS – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+  /* ─── RESET & VARIABLES ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --navy:        #0D1F3C;
+    --navy-mid:    #162B52;
+    --navy-light:  #1E3A6E;
+    --accent:      #2563EB;
+    --accent-h:    #1D4ED8;
+    --gold:        #F59E0B;
+    --success:     #10B981;
+    --danger:      #EF4444;
+    --white:       #FFFFFF;
+    --gray-50:     #F8FAFC;
+    --gray-100:    #F1F5F9;
+    --gray-200:    #E2E8F0;
+    --gray-300:    #CBD5E1;
+    --gray-400:    #94A3B8;
+    --gray-500:    #64748B;
+    --gray-600:    #475569;
+    --gray-700:    #334155;
+    --radius:      10px;
+    --radius-lg:   16px;
+    --shadow:      0 4px 24px rgba(13,31,60,0.13);
+    --shadow-lg:   0 16px 48px rgba(13,31,60,0.20);
+  }
+ 
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+  }
+ 
+  /* ─── PAGE WRAPPER ─── */
+  .login-page {
+    display: flex;
+    min-height: 100vh;
+    animation: fadeIn .4s ease;
+  }
+ 
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+ 
+  /* ─── LEFT PANEL ─── */
+  .left-panel {
+    flex: 0 0 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 56px;
+    background: var(--white);
+    position: relative;
+    z-index: 2;
+  }
+ 
+  /* brand */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 52px;
+  }
+ 
+  .brand-icon {
+    width: 46px; height: 46px;
+    background: var(--navy);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+ 
+  .brand-icon svg { width: 24px; height: 24px; }
+ 
+  .brand-text { line-height: 1.15; }
+ 
+  .brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    display: block;
+  }
+ 
+  .brand-tag {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--gray-400);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+ 
+  /* headings */
+  .login-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 34px;
+    color: var(--navy);
+    line-height: 1.18;
+    margin-bottom: 8px;
+  }
+ 
+  .login-sub {
+    font-size: 14px;
+    color: var(--gray-400);
+    margin-bottom: 40px;
+  }
+ 
+  /* form */
+  .form-group {
+    margin-bottom: 20px;
+  }
+ 
+  .form-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gray-600);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+ 
+  .input-wrap {
+    position: relative;
+  }
+ 
+  .input-wrap .icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    color: var(--gray-400);
+    pointer-events: none;
+  }
+ 
+  .form-group input {
+    width: 100%;
+    padding: 13px 44px 13px 42px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+ 
+  .form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+    background: var(--white);
+  }
+ 
+  .pw-toggle {
+    position: absolute;
+    right: 14px; top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--gray-400);
+    transition: color .15s;
+    line-height: 0;
+  }
+ 
+  .pw-toggle:hover { color: var(--navy); }
+ 
+  /* checkbox row */
+  .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+ 
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-500);
+    cursor: pointer;
+    user-select: none;
+  }
+ 
+  .checkbox-label input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+ 
+  .forgot-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    transition: color .15s;
+  }
+ 
+  .forgot-link:hover { color: var(--accent-h); text-decoration: underline; }
+ 
+  /* login button */
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: .04em;
+    transition: background .2s, transform .1s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .btn-login::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,.08);
+    opacity: 0;
+    transition: opacity .15s;
+  }
+ 
+  .btn-login:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-login:hover::after { opacity: 1; }
+  .btn-login:active { transform: translateY(0); box-shadow: none; }
+ 
+  /* loading state */
+  .btn-login.loading { pointer-events: none; opacity: .8; }
+ 
+  .btn-login .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,.35);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin: 0 auto;
+  }
+ 
+  .btn-login.loading .btn-text { display: none; }
+  .btn-login.loading .spinner { display: block; }
+ 
+  @keyframes spin { to { transform: rotate(360deg); } }
+ 
+  /* error alert */
+  .alert {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 14px;
+    animation: shake .3s ease;
+  }
+ 
+  .alert.show { display: flex; }
+  .alert svg { width: 16px; height: 16px; flex-shrink: 0; }
+ 
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60%  { transform: translateX(-5px); }
+    40%,80%  { transform: translateX(5px); }
+  }
+ 
+  /* hint box */
+  .hint-box {
+    margin-top: 24px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: var(--gray-500);
+    text-align: center;
+    line-height: 1.7;
+  }
+ 
+  .hint-box .cred {
+    font-weight: 700;
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+  }
+ 
+  /* divider */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 28px 0 0;
+  }
+ 
+  .divider hr { flex: 1; border: none; border-top: 1px solid var(--gray-200); }
+  .divider span { font-size: 12px; color: var(--gray-300); }
+ 
+  /* ─── RIGHT PANEL ─── */
+  .right-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--navy);
+  }
+ 
+  .right-img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: .5;
+  }
+ 
+  .right-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      150deg,
+      rgba(13,31,60,.92) 0%,
+      rgba(30,58,110,.65) 55%,
+      rgba(37,99,235,.35) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px 60px;
+  }
+ 
+  .right-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,158,11,.18);
+    border: 1px solid rgba(245,158,11,.35);
+    border-radius: 99px;
+    padding: 6px 16px;
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+ 
+  .right-badge span {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+ 
+  .right-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: 40px;
+    color: var(--white);
+    line-height: 1.28;
+    margin-bottom: 18px;
+  }
+ 
+  .right-desc {
+    color: rgba(255,255,255,.60);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 44px;
+  }
+ 
+  /* stats row */
+  .stats-row {
+    display: flex;
+    gap: 36px;
+  }
+ 
+  .stat { color: var(--white); }
+ 
+  .stat-num {
+    font-size: 30px;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+ 
+  .stat-lbl {
+    font-size: 12px;
+    color: rgba(255,255,255,.50);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+ 
+  .stat-divider {
+    width: 1px;
+    background: rgba(255,255,255,.12);
+    align-self: stretch;
+  }
+ 
+  /* ─── FORGOT PASSWORD MODAL ─── */
+  .overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(13,31,60,.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+ 
+  .overlay.open { display: flex; }
+ 
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%; max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .22s ease;
+    overflow: hidden;
+  }
+ 
+  @keyframes slideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+ 
+  .modal-header {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+ 
+  .modal-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+  }
+ 
+  .modal-header p {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 3px;
+  }
+ 
+  .btn-close {
+    width: 32px; height: 32px;
+    background: var(--gray-100);
+    border: none; border-radius: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-500);
+    font-size: 20px;
+    transition: background .15s;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+ 
+  .btn-close:hover { background: var(--gray-200); }
+ 
+  /* step indicator */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 28px;
+    margin: 18px 0 0;
+  }
+ 
+  .step-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .3s;
+    flex-shrink: 0;
+  }
+ 
+  .step-dot.active { background: var(--navy); color: var(--white); }
+  .step-dot.done   { background: var(--success); color: var(--white); }
+ 
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--gray-200);
+    transition: background .3s;
+  }
+ 
+  .step-line.done { background: var(--success); }
+ 
+  .step-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 28px 0;
+    margin-bottom: 20px;
+  }
+ 
+  .step-labels span {
+    font-size: 11px;
+    color: var(--gray-400);
+    flex: 1;
+    text-align: center;
+  }
+ 
+  .step-labels span:first-child { text-align: left; }
+  .step-labels span:last-child  { text-align: right; }
+ 
+  .modal-body {
+    padding: 4px 28px 24px;
+    min-height: 160px;
+  }
+ 
+  .mform-group { margin-bottom: 18px; }
+ 
+  .mform-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gray-600);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+ 
+  .mform-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+ 
+  .mform-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+  }
+ 
+  .mform-note {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 6px;
+  }
+ 
+  .mform-note b { color: var(--accent); }
+ 
+  .btn-full {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+  }
+ 
+  .btn-navy { background: var(--navy); color: var(--white); }
+  .btn-navy:hover { background: var(--navy-light); }
+  .btn-success-bg { background: var(--success); color: var(--white); }
+  .btn-success-bg:hover { background: #059669; }
+ 
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 24px 0 8px;
+  }
+ 
+  .success-state .check-circle {
+    width: 60px; height: 60px;
+    background: #ECFDF5;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+ 
+  .success-state h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+ 
+  .success-state p {
+    font-size: 13px;
+    color: var(--gray-400);
+    line-height: 1.6;
+  }
+ 
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 860px) {
+    .left-panel { flex: 0 0 100%; padding: 40px 28px; }
+    .right-panel { display: none; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- ════════════════════════════════════════
+     LOGIN PAGE
+════════════════════════════════════════ -->
+<div class="login-page">
+ 
+  <!-- LEFT: form -->
+  <div class="left-panel">
+ 
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9.5L12 3L21 9.5V20C21 20.552 20.552 21 20 21H4C3.448 21 3 20.552 3 20V9.5Z" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M9 21V13H15V21" stroke="#0D1F3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Fanaka PMS</span>
+        <span class="brand-tag">Property Management System</span>
+      </div>
+    </div>
+ 
+    <!-- Heading -->
+    <h1 class="login-heading">Welcome back,<br>sign in to continue.</h1>
+    <p class="login-sub">Manage properties, tenants &amp; rent — all in one place.</p>
+ 
+    <!-- Username -->
+    <div class="form-group">
+      <label for="username">Username</label>
+      <div class="input-wrap">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+      </div>
+    </div>
+ 
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+        <span class="pw-toggle" id="togglePw" title="Toggle visibility">
+          <svg id="eyeShow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="eyeHide" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+ 
+    <!-- Row: show-pw + forgot -->
+    <div class="form-row">
+      <label class="checkbox-label" for="showPw">
+        <input type="checkbox" id="showPw" onchange="togglePassword()"/>
+        Show Password
+      </label>
+      <a href="#" class="forgot-link" onclick="openForgot(event)">Forgot Password?</a>
+    </div>
+ 
+    <!-- Submit -->
+    <button class="btn-login" id="loginBtn" onclick="handleLogin()">
+      <span class="btn-text">Sign In to Dashboard</span>
+      <div class="spinner"></div>
+    </button>
+ 
+    <!-- Error -->
+    <div class="alert" id="loginAlert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      <span id="alertMsg">Invalid username or password. Please try again.</span>
+    </div>
+ 
+    <!-- Demo hint -->
+    <div class="hint-box">
+      Demo credentials &nbsp;|&nbsp;
+      Username: <span class="cred">admin</span> &nbsp;&nbsp;
+      Password: <span class="cred">fanaka2024</span>
+    </div>
+ 
+  </div><!-- /left-panel -->
+ 
+  <!-- RIGHT: background image & stats -->
+  <div class="right-panel">
+    <img class="right-img"
+      src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1400&auto=format&fit=crop&q=80"
+      alt="Modern apartment buildings"/>
+    <div class="right-overlay">
+ 
+      <div class="right-badge">
+        <span></span>
+        Nairobi, Kenya
+      </div>
+ 
+      <h2 class="right-quote">Smarter property<br>management starts here.</h2>
+ 
+      <p class="right-desc">
+        Fanaka PMS helps property managers track tenants,
+        collect rent, manage leases, and generate reports —
+        all from one clean, modern dashboard.
+      </p>
+ 
+      <div class="stats-row">
+        <div class="stat">
+          <span class="stat-num">24</span>
+          <span class="stat-lbl">Properties</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">87</span>
+          <span class="stat-lbl">Tenants</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">91%</span>
+          <span class="stat-lbl">Occupancy</span>
+        </div>
+      </div>
+ 
+    </div>
+  </div><!-- /right-panel -->
+ 
+</div><!-- /login-page -->
+ 
+ 
+<!-- ════════════════════════════════════════
+     FORGOT PASSWORD MODAL
+════════════════════════════════════════ -->
+<div class="overlay" id="forgotOverlay">
+  <div class="modal">
+ 
+    <!-- Header -->
+    <div class="modal-header">
+      <div>
+        <h3>Reset Password</h3>
+        <p id="stepSubtitle">Enter your username to continue</p>
+      </div>
+      <button class="btn-close" onclick="closeForgot()">&#215;</button>
+    </div>
+ 
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="sd1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="sd2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="sd3">3</div>
+    </div>
+    <div class="step-labels">
+      <span>Identify</span>
+      <span>Verify</span>
+      <span>Reset</span>
+    </div>
+ 
+    <!-- Modal Body -->
+    <div class="modal-body">
+ 
+      <!-- Step 1: Username -->
+      <div id="fpStep1">
+        <div class="mform-group">
+          <label>Username</label>
+          <input type="text" id="fpUser" placeholder="Your admin username"/>
+          <p class="mform-note">Enter the username associated with your account.</p>
+        </div>
+        <button class="btn-full btn-navy" onclick="fpGoStep2()">Send Reset Code →</button>
+      </div>
+ 
+      <!-- Step 2: Code -->
+      <div id="fpStep2" style="display:none">
+        <div class="mform-group">
+          <label>Reset Code</label>
+          <input type="text" id="fpCode" placeholder="4-digit code" maxlength="4"/>
+          <p class="mform-note">A reset code has been sent. <b>Demo code: 1234</b></p>
+        </div>
+        <button class="btn-full btn-navy" onclick="fpGoStep3()">Verify Code →</button>
+      </div>
+ 
+      <!-- Step 3: New password -->
+      <div id="fpStep3" style="display:none">
+        <div class="mform-group">
+          <label>New Password</label>
+          <input type="password" id="fpNewPw" placeholder="Enter new password"/>
+        </div>
+        <div class="mform-group">
+          <label>Confirm Password</label>
+          <input type="password" id="fpConfPw" placeholder="Re-enter new password"/>
+        </div>
+        <button class="btn-full btn-success-bg" onclick="fpSubmit()">Reset Password ✓</button>
+      </div>
+ 
+      <!-- Success state -->
+      <div class="success-state" id="fpSuccess">
+        <div class="check-circle">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+        </div>
+        <h4>Password Reset!</h4>
+        <p>Your password has been updated successfully.<br>You can now sign in with your new password.</p>
+        <br>
+        <button class="btn-full btn-navy" onclick="closeForgot()" style="margin-top:8px">Back to Sign In</button>
+      </div>
+ 
+    </div>
+  </div>
+</div>
+ 
+ 
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+  /* ── TOGGLE PASSWORD VISIBILITY ── */
+  function togglePassword() {
+    const pwInput = document.getElementById('password');
+    const cb      = document.getElementById('showPw');
+    const eyeShow = document.getElementById('eyeShow');
+    const eyeHide = document.getElementById('eyeHide');
+ 
+    if (cb.checked) {
+      pwInput.type  = 'text';
+      eyeShow.style.display = 'none';
+      eyeHide.style.display = 'block';
+    } else {
+      pwInput.type  = 'password';
+      eyeShow.style.display = 'block';
+      eyeHide.style.display = 'none';
+    }
+  }
+ 
+  /* eye icon toggle (the eye svg itself) */
+  document.getElementById('togglePw').addEventListener('click', function () {
+    const cb = document.getElementById('showPw');
+    cb.checked = !cb.checked;
+    togglePassword();
+  });
+ 
+  /* ── LOGIN HANDLER ── */
+  function handleLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
+    const btn  = document.getElementById('loginBtn');
+    const alert = document.getElementById('loginAlert');
+ 
+    // Basic empty check
+    if (!user || !pass) {
+      showAlert('Please enter both username and password.');
+      return;
+    }
+ 
+    // Loading state
+    btn.classList.add('loading');
+    alert.classList.remove('show');
+ 
+    // Simulate a brief authentication delay (realistic UX)
+    setTimeout(function () {
+      btn.classList.remove('loading');
+ 
+      if (user === 'admin' && pass === 'fanaka2024') {
+        // ✅ Success → redirect to dashboard
+        // Replace the href below with your actual dashboard file path
+        window.location.href = 'dashboard.html';
+      } else {
+        showAlert('Invalid username or password. Please try again.');
+      }
+    }, 900);
+  }
+ 
+  function showAlert(msg) {
+    const alert = document.getElementById('loginAlert');
+    document.getElementById('alertMsg').textContent = msg;
+    alert.classList.add('show');
+  }
+ 
+  /* Allow Enter key to submit */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+ 
+  /* ── FORGOT PASSWORD MODAL ── */
+  function openForgot(e) {
+    e.preventDefault();
+    resetForgotModal();
+    document.getElementById('forgotOverlay').classList.add('open');
+  }
+ 
+  function closeForgot() {
+    document.getElementById('forgotOverlay').classList.remove('open');
+    setTimeout(resetForgotModal, 300);
+  }
+ 
+  function resetForgotModal() {
+    document.getElementById('fpStep1').style.display = 'block';
+    document.getElementById('fpStep2').style.display = 'none';
+    document.getElementById('fpStep3').style.display = 'none';
+    document.getElementById('fpSuccess').style.display = 'none';
+    document.getElementById('fpUser').value = '';
+    document.getElementById('fpCode').value = '';
+ 
+    // Reset step indicator
+    ['sd1','sd2','sd3'].forEach(function(id, i) {
+      const el = document.getElementById(id);
+      el.className = 'step-dot';
+      el.textContent = i + 1;
+      if (i === 0) el.classList.add('active');
+    });
+    document.getElementById('sl1').className = 'step-line';
+    document.getElementById('sl2').className = 'step-line';
+    document.getElementById('stepSubtitle').textContent = 'Enter your username to continue';
+  }
+ 
+  function fpGoStep2() {
+    const user = document.getElementById('fpUser').value.trim();
+    if (!user) { alert('Please enter your username.'); return; }
+ 
+    // Animate step indicator
+    document.getElementById('sd1').className = 'step-dot done';
+    document.getElementById('sd1').innerHTML = '✓';
+    document.getElementById('sl1').className = 'step-line done';
+    document.getElementById('sd2').className = 'step-dot active';
+    document.getElementById('stepSubtitle').textContent = 'Enter the reset code sent to your email';
+ 
+    document.getElementById('fpStep1').style.display = 'none';
+    document.getElementById('fpStep2').style.display = 'block';
+    document.getElementById('fpCode').focus();
+  }
+ 
+  function fpGoStep3() {
+    const code = document.getElementById('fpCode').value.trim();
+    if (code !== '1234') { alert('Invalid code. Demo code is: 1234'); return; }
+ 
+    document.getElementById('sd2').className = 'step-dot done';
+    document.getElementById('sd2').innerHTML = '✓';
+    document.getElementById('sl2').className = 'step-line done';
+    document.getElementById('sd3').className = 'step-dot active';
+    document.getElementById('stepSubtitle').textContent = 'Set your new password';
+ 
+    document.getElementById('fpStep2').style.display = 'none';
+    document.getElementById('fpStep3').style.display = 'block';
+    document.getElementById('fpNewPw').focus();
+  }
+ 
+  function fpSubmit() {
+    const np = document.getElementById('fpNewPw').value;
+    const cp = document.getElementById('fpConfPw').value;
+    if (!np)       { alert('Please enter a new password.');          return; }
+    if (np !== cp) { alert('Passwords do not match. Please retry.'); return; }
+    if (np.length < 6) { alert('Password must be at least 6 characters.'); return; }
+ 
+    document.getElementById('sd3').className = 'step-dot done';
+    document.getElementById('sd3').innerHTML = '✓';
+ 
+    document.getElementById('fpStep3').style.display   = 'none';
+    document.getElementById('fpSuccess').style.display = 'block';
+    document.getElementById('stepSubtitle').textContent = 'Password updated successfully';
+  }
+ 
+  /* Close modal on overlay click */
+  document.getElementById('forgotOverlay').addEventListener('click', function (e) {
+    if (e.target === this) closeForgot();
+  });
+</script>
+</body>
+</html>

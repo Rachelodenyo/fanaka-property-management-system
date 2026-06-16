@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fanaka PMS – Tenants</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0D1F3C;--navy-light:#1E3A6E;--accent:#2563EB;
+  --gold:#F59E0B;--success:#10B981;--danger:#EF4444;--white:#FFFFFF;
+  --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+  --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+  --gray-600:#475569;--gray-700:#334155;
+  --radius:10px;--radius-lg:16px;--sidebar-w:252px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-700);min-height:100vh}
+ 
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-brand{padding:26px 22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:40px;height:40px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px}
+.brand-name{font-family:'DM Serif Display',serif;font-size:17px;color:var(--white);line-height:1.15;display:block}
+.brand-tag{font-size:10px;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase}
+.nav{flex:1;padding:14px 10px}
+.nav-section{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.58);font-size:13.5px;font-weight:500;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:var(--accent);color:var(--white)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:9px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--white);flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10.5px;color:rgba(255,255,255,.38)}
+.btn-logout{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.35);padding:5px;border-radius:6px;transition:color .15s;line-height:0}
+.btn-logout:hover{color:var(--danger)}
+.btn-logout svg{width:16px;height:16px}
+ 
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--gray-200);height:66px;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:23px;color:var(--navy)}
+.topbar-date{font-size:13px;color:var(--gray-400)}
+.page{padding:30px 32px}
+ 
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.section-hd h2{font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy)}
+.section-hd p{font-size:13px;color:var(--gray-400);margin-top:3px}
+ 
+/* ── STAT MINI CARDS ── */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.mini-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:16px 18px;display:flex;align-items:center;gap:13px}
+.mini-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mini-icon svg{width:20px;height:20px}
+.mi-blue{background:#EFF6FF;color:var(--accent)}
+.mi-green{background:#F0FDF4;color:var(--success)}
+.mi-gold{background:#FFFBEB;color:var(--gold)}
+.mi-red{background:#FFF1F2;color:var(--danger)}
+.mini-label{font-size:11px;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.mini-value{font-size:22px;font-weight:700;color:var(--navy);line-height:1}
+ 
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;max-width:320px}
+.search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--gray-400);pointer-events:none}
+.search-box input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:13.5px;font-family:'DM Sans',sans-serif;background:var(--white);outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+select.filter{padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--gray-600);background:var(--white);outline:none;cursor:pointer}
+select.filter:focus{border-color:var(--accent)}
+ 
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all .15s}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:var(--navy);color:var(--white)}
+.btn-primary:hover{background:var(--navy-light);transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:var(--white)}
+.btn-danger:hover{background:#DC2626}
+.btn-success{background:var(--success);color:var(--white)}
+.btn-success:hover{background:#059669}
+.btn-outline{background:var(--white);color:var(--gray-600);border:1.5px solid var(--gray-200)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:12px}
+ 
+/* ── CARD / TABLE ── */
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden}
+.tbl-wrap{overflow-x:auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{text-align:left;position: sticky;top: 0;z-index: 10;padding:10px 16px;font-size:10.5px;font-weight:600;color:var(--gray-600);letter-spacing:.08em;text-transform:uppercase;background:var(--gray-100);border-bottom:1px solid var(--gray-200)}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--gray-50)}
+tbody td{padding:13px 16px;color:var(--gray-600);vertical-align:middle}
+tbody td strong{color:var(--navy);font-weight:600}
+.actions-cell{display:flex;gap:6px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-400)}
+.empty-state svg{width:52px;height:52px;margin-bottom:14px;opacity:.3}
+.empty-state h4{font-size:16px;color:var(--gray-500);margin-bottom:6px}
+.empty-state p{font-size:13px}
+ 
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600}
+.pill-green{background:#F0FDF4;color:#166534}
+.pill-red{background:#FFF1F2;color:#991B1B}
+.pill-gold{background:#FFFBEB;color:#92400E}
+.pill-blue{background:#EFF6FF;color:#1E40AF}
+ 
+/* ── TENANT AVATAR ── */
+.ten-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--white);flex-shrink:0}
+.ten-row{display:flex;align-items:center;gap:10px}
+ 
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(13,31,60,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:600px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(13,31,60,.22);animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:24px 28px 18px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy)}
+.btn-close{width:32px;height:32px;background:var(--gray-100);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-500);font-size:20px;transition:background .15s}
+.btn-close:hover{background:var(--gray-200)}
+.modal-body{padding:22px 28px}
+.modal-footer{padding:16px 28px;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:10px}
+ 
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-full{grid-column:1/-1}
+.mform-group{margin-bottom:0}
+.mform-group label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px}
+.mform-group input,.mform-group select,.mform-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--gray-700);background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s}
+.mform-group input:focus,.mform-group select:focus,.mform-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.09)}
+.section-divider{grid-column:1/-1;border:none;border-top:1.5px dashed var(--gray-200);margin:4px 0}
+.form-section-label{grid-column:1/-1;font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.08em;padding-top:4px}
+ 
+/* ── VIEW MODAL ── */
+.view-modal{max-width:500px}
+.view-header-band{background:var(--navy);padding:28px 28px 22px;display:flex;align-items:center;gap:16px}
+.view-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:var(--white);flex-shrink:0}
+.view-name{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white)}
+.view-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.detail-item{padding:14px 28px;border-bottom:1px solid var(--gray-100)}
+.detail-item:nth-child(odd){border-right:1px solid var(--gray-100)}
+.detail-label{font-size:10.5px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.detail-value{font-size:14px;font-weight:500;color:var(--navy)}
+ 
+/* ── DELETE MODAL ── */
+.del-modal{max-width:400px}
+ 
+/* ── TOAST ── */
+.toast{position:fixed;bottom:26px;right:26px;z-index:500;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--white);box-shadow:0 8px 30px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+.toast.info{background:var(--navy)}
+ 
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.page{padding:20px 16px}.form-grid{grid-template-columns:1fr}.mini-stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+ 
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.552 20.552 21 20 21H4C3.448 21 3 20.552 3 20V9.5Z" fill="#0D1F3C"/><path d="M9 21V13H15V21" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div><span class="brand-name">Fanaka PMS</span><span class="brand-tag">Admin Portal</span></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <div class="nav-section">Management</div>
+    <a href="properties.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Properties
+    </a>
+    <a href="tenants.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Tenants
+    </a>
+    <a href="payments.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Rent Payments
+    </a>
+    <a href="leases.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Leases
+    </a>
+    <div class="nav-section">Reports</div>
+    <a href="reports.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">AD</div>
+      <div class="user-info"><div class="user-name">Admin User</div><div class="user-role">System Administrator</div></div>
+      <button class="btn-logout" onclick="if(confirm('Sign out?'))location.href='login.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+ 
+<!-- ════ MAIN ════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Tenants</div>
+    <div class="topbar-date" id="tbDate"></div>
+  </div>
+ 
+  <div class="page">
+ 
+    <!-- Mini Stats -->
+    <div class="mini-stats">
+      <div class="mini-card">
+        <div class="mini-icon mi-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div><div class="mini-label">Total Tenants</div><div class="mini-value" id="ms-total">0</div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon mi-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div><div class="mini-label">Active Tenants</div><div class="mini-value" id="ms-active">0</div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon mi-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <div><div class="mini-label">Properties Occupied</div><div class="mini-value" id="ms-props">0</div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon mi-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div><div class="mini-label">Balance Owed</div><div class="mini-value" id="ms-owed" style="font-size:17px">KES 0</div></div>
+      </div>
+    </div>
+ 
+    <!-- Section header -->
+    <div class="section-hd">
+      <div><h2>Tenant Records</h2><p>Register, view, update and remove tenants</p></div>
+      <button class="btn btn-primary" onclick="openAdd()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Tenant
+      </button>
+    </div>
+ 
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, phone, unit…" oninput="renderTable()"/>
+      </div>
+      <select class="filter" id="filterProp" onchange="renderTable()">
+        <option value="">All Properties</option>
+      </select>
+    </div>
+ 
+    <!-- Table -->
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Tenant</th><th>Phone</th><th>Email</th>
+              <th>Unit</th><th>Property</th><th>Move-in</th><th>Balance</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tenTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ════ ADD / EDIT MODAL ════ -->
+<div class="overlay" id="tenOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add New Tenant</h3>
+      <button class="btn-close" onclick="closeModal()">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fId"/>
+      <div class="form-grid">
+ 
+        <!-- Personal Info -->
+        <div class="form-section-label">Personal Information</div>
+        <div class="mform-group">
+          <label>Full Name *</label>
+          <input type="text" id="fName" placeholder="First and Last name"/>
+        </div>
+        <div class="mform-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="fPhone" placeholder="e.g. 0712 345 678"/>
+        </div>
+        <div class="mform-group">
+          <label>Email Address</label>
+          <input type="email" id="fEmail" placeholder="email@example.com"/>
+        </div>
+        <div class="mform-group">
+          <label>National ID / Passport</label>
+          <input type="text" id="fNatId" placeholder="ID or Passport number"/>
+        </div>
+ 
+        <hr class="section-divider"/>
+ 
+        <!-- Property Info -->
+        <div class="form-section-label">Property Assignment</div>
+        <div class="mform-group">
+          <label>Property</label>
+          <select id="fProp"><option value="">— Select property —</option></select>
+        </div>
+        <div class="mform-group">
+          <label>Unit Number</label>
+          <input type="text" id="fUnit" placeholder="e.g. A1, 3B, Flat 5"/>
+        </div>
+        <div class="mform-group">
+          <label>Move-in Date</label>
+          <input type="date" id="fMoveIn"/>
+        </div>
+        <div class="mform-group">
+          <label>Opening Balance (KES)</label>
+          <input type="number" id="fBalance" placeholder="0" min="0" value="0"/>
+        </div>
+ 
+        <hr class="section-divider"/>
+ 
+        <!-- Emergency -->
+        <div class="form-section-label">Emergency Contact</div>
+        <div class="mform-group">
+          <label>Emergency Contact Name</label>
+          <input type="text" id="fEmName" placeholder="Contact full name"/>
+        </div>
+        <div class="mform-group">
+          <label>Emergency Contact Phone</label>
+          <input type="tel" id="fEmPhone" placeholder="e.g. 0722 000 111"/>
+        </div>
+ 
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTenant()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Tenant
+      </button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ════ VIEW MODAL ════ -->
+<div class="overlay" id="viewOverlay">
+  <div class="modal view-modal">
+    <div class="view-header-band" id="viewBand">
+      <div class="view-avatar" id="viewAvatar"></div>
+      <div>
+        <div class="view-name" id="viewName"></div>
+        <div class="view-sub" id="viewSub"></div>
+      </div>
+    </div>
+    <div class="detail-grid" id="detailGrid"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeViewModal()">Close</button>
+      <button class="btn btn-primary" id="viewEditBtn">Edit Tenant</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ════ DELETE CONFIRM ════ -->
+<div class="overlay" id="delOverlay">
+  <div class="modal del-modal">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="btn-close" onclick="closeDelModal()">&#215;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding-top:28px">
+      <div style="width:56px;height:56px;background:#FFF1F2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" width="26" height="26"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+      </div>
+      <h4 style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin:14px 0 8px">Remove Tenant?</h4>
+      <p style="font-size:13px;color:var(--gray-500);line-height:1.6">You are about to remove <strong id="delName"></strong> from the system.<br>This <strong>cannot</strong> be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDelModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+/* ── DATA LAYER ── */
+const DB = {
+  tenants:    () => { try{ return JSON.parse(localStorage.getItem('fpms_tenants'))    ||[]; }catch(e){return[];} },
+  properties: () => { try{ return JSON.parse(localStorage.getItem('fpms_properties')) ||[]; }catch(e){return[];} },
+  saveTenants: d  => localStorage.setItem('fpms_tenants', JSON.stringify(d)),
+};
+ 
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+ 
+/* ── AVATAR COLORS ── */
+const COLORS = ['#2563EB','#7C3AED','#DB2777','#059669','#D97706','#DC2626','#0891B2'];
+function avatarColor(name){ let h=0; for(let c of name) h+=c.charCodeAt(0); return COLORS[h%COLORS.length]; }
+function initials(name){ return name.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+ 
+/* ── FORMAT ── */
+function fmtKES(n){ return 'KES '+Number(n||0).toLocaleString('en-KE'); }
+ 
+/* ── TOPBAR DATE ── */
+document.getElementById('tbDate').textContent =
+  new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+ 
+/* ── TOAST ── */
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>{t.className='toast '+type;},2800);
+}
+ 
+/* ── POPULATE PROPERTY DROPDOWNS ── */
+function populatePropDropdown(selId, selected){
+  const sel  = document.getElementById(selId);
+  const props = DB.properties();
+  sel.innerHTML = '<option value="">— Select property —</option>'
+    + props.map(p=>`<option value="${p.name}" ${p.name===selected?'selected':''}>${p.name}</option>`).join('');
+}
+ 
+function populateFilterDropdown(){
+  const sel   = document.getElementById('filterProp');
+  const props = DB.properties();
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All Properties</option>'
+    + props.map(p=>`<option value="${p.name}" ${p.name===current?'selected':''}>${p.name}</option>`).join('');
+}
+ 
+/* ── MINI STATS ── */
+function updateMiniStats(){
+  const tenants  = DB.tenants();
+  const payments = JSON.parse(localStorage.getItem('fpms_payments')||'[]');
+  document.getElementById('ms-total').textContent  = tenants.length;
+  document.getElementById('ms-active').textContent = tenants.filter(t=>t.property).length;
+  const uniqueProps = new Set(tenants.map(t=>t.property).filter(Boolean));
+  document.getElementById('ms-props').textContent  = uniqueProps.size;
+  const totalOwed = tenants.reduce((s,t)=>s+Number(t.balance||0),0);
+  document.getElementById('ms-owed').textContent   = fmtKES(totalOwed);
+}
+ 
+/* ── RENDER TABLE ── */
+function renderTable(){
+  const q    = document.getElementById('searchInput').value.toLowerCase();
+  const prop = document.getElementById('filterProp').value;
+  populateFilterDropdown();
+ 
+  const data = DB.tenants().filter(t=>{
+    const matchQ = !q || t.name.toLowerCase().includes(q)
+                      || (t.phone||'').includes(q)
+                      || (t.unit||'').toLowerCase().includes(q)
+                      || (t.email||'').toLowerCase().includes(q);
+    const matchP = !prop || t.property === prop;
+    return matchQ && matchP;
+  });
+ 
+  const tbody = document.getElementById('tenTbody');
+ 
+  if(data.length===0){
+    tbody.innerHTML=`<tr><td colspan="9">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        <h4>No tenants found</h4>
+        <p>Click "Add Tenant" to register your first tenant.</p>
+      </div></td></tr>`;
+    return;
+  }
+ 
+  tbody.innerHTML = data.map((t,i)=>{
+    const bal    = Number(t.balance||0);
+    const balStr = bal>0
+      ? `<span style="color:var(--danger);font-weight:700">${fmtKES(bal)} <span style="font-size:10px">(owed)</span></span>`
+      : bal<0
+      ? `<span style="color:var(--success);font-weight:700">${fmtKES(Math.abs(bal))} <span style="font-size:10px">(credit)</span></span>`
+      : `<span style="color:var(--gray-400)">—</span>`;
+ 
+    return `<tr>
+      <td>${i+1}</td>
+      <td>
+        <div class="ten-row">
+          <div class="ten-avatar" style="background:${avatarColor(t.name)}">${initials(t.name)}</div>
+          <div>
+            <strong>${t.name}</strong>
+            ${t.natId?`<br><span style="font-size:11px;color:var(--gray-400)">ID: ${t.natId}</span>`:''}
+          </div>
+        </div>
+      </td>
+      <td>${t.phone||'—'}</td>
+      <td>${t.email||'—'}</td>
+      <td><span class="pill pill-blue">${t.unit||'—'}</span></td>
+      <td>${t.property||'—'}</td>
+      <td>${t.moveIn||'—'}</td>
+      <td>${balStr}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="btn btn-outline btn-sm" onclick="openView('${t.id}')">View</button>
+          <button class="btn btn-outline btn-sm" onclick="openEdit('${t.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="askDelete('${t.id}','${t.name.replace(/'/g,"\\'")}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+ 
+  updateMiniStats();
+}
+ 
+/* ── OPEN ADD ── */
+function openAdd(){
+  document.getElementById('modalTitle').textContent='Add New Tenant';
+  clearForm();
+  populatePropDropdown('fProp','');
+  document.getElementById('fMoveIn').value = new Date().toISOString().slice(0,10);
+  document.getElementById('tenOverlay').classList.add('open');
+}
+ 
+/* ── OPEN EDIT ── */
+function openEdit(id){
+  const t = DB.tenants().find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('modalTitle').textContent='Edit Tenant';
+  document.getElementById('fId').value      = t.id;
+  document.getElementById('fName').value    = t.name;
+  document.getElementById('fPhone').value   = t.phone||'';
+  document.getElementById('fEmail').value   = t.email||'';
+  document.getElementById('fNatId').value   = t.natId||'';
+  document.getElementById('fUnit').value    = t.unit||'';
+  document.getElementById('fMoveIn').value  = t.moveIn||'';
+  document.getElementById('fBalance').value = t.balance||0;
+  document.getElementById('fEmName').value  = t.emName||'';
+  document.getElementById('fEmPhone').value = t.emPhone||'';
+  populatePropDropdown('fProp', t.property||'');
+  document.getElementById('tenOverlay').classList.add('open');
+  closeViewModal();
+}
+ 
+/* ── OPEN VIEW ── */
+function openView(id){
+  const t = DB.tenants().find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('viewAvatar').textContent  = initials(t.name);
+  document.getElementById('viewAvatar').style.background = avatarColor(t.name);
+  document.getElementById('viewName').textContent   = t.name;
+  document.getElementById('viewSub').textContent    = (t.unit?'Unit '+t.unit+' · ':'') + (t.property||'No property assigned');
+  document.getElementById('detailGrid').innerHTML   = [
+    ['Phone',          t.phone||'—'],
+    ['Email',          t.email||'—'],
+    ['National ID',    t.natId||'—'],
+    ['Move-in Date',   t.moveIn||'—'],
+    ['Property',       t.property||'—'],
+    ['Unit',           t.unit||'—'],
+    ['Balance',        fmtKES(t.balance||0)],
+    ['Emergency',      t.emName ? t.emName+' ('+t.emPhone+')' : '—'],
+  ].map(([lbl,val])=>`
+    <div class="detail-item">
+      <div class="detail-label">${lbl}</div>
+      <div class="detail-value">${val}</div>
+    </div>`).join('');
+  document.getElementById('viewEditBtn').onclick = ()=>openEdit(id);
+  document.getElementById('viewOverlay').classList.add('open');
+}
+ 
+function closeViewModal(){ document.getElementById('viewOverlay').classList.remove('open'); }
+ 
+/* ── CLOSE MODAL ── */
+function closeModal(){
+  document.getElementById('tenOverlay').classList.remove('open');
+  clearForm();
+}
+ 
+function clearForm(){
+  ['fId','fName','fPhone','fEmail','fNatId','fUnit','fEmName','fEmPhone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fBalance').value = 0;
+}
+ 
+/* ── SAVE TENANT ── */
+function saveTenant(){
+  const name  = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  if(!name)  { showToast('Full name is required.','error');  return; }
+  if(!phone) { showToast('Phone number is required.','error'); return; }
+  const property = document.getElementById('fProp').value;
+
+if (!property) {
+  showToast('Please select a property.', 'error');
+  return;
+}
+ 
+  const existingId = document.getElementById('fId').value;
+  const data = DB.tenants();
+ 
+  const record = {
+    id:      existingId || uid(),
+    name,
+    phone,
+    email:   document.getElementById('fEmail').value.trim(),
+    natId:   document.getElementById('fNatId').value.trim(),
+    unit:    document.getElementById('fUnit').value.trim(),
+    property: property,
+    moveIn:  document.getElementById('fMoveIn').value,
+    balance: Number(document.getElementById('fBalance').value)||0,
+    emName:  document.getElementById('fEmName').value.trim(),
+    emPhone: document.getElementById('fEmPhone').value.trim(),
+    createdAt: existingId ? (data.find(x=>x.id===existingId)||{}).createdAt : new Date().toISOString(),
+  };
+ 
+  if(existingId){
+    data[data.findIndex(x=>x.id===existingId)] = record;
+    showToast(`"${name}" updated.`,'success');
+  } else {
+    data.push(record);
+    showToast(`"${name}" registered successfully.`,'success');
+  }
+ 
+  DB.saveTenants(data);
+  closeModal();
+  renderTable();
+}
+ 
+/* ── DELETE ── */
+let _deleteId='';
+function askDelete(id,name){
+  _deleteId=id;
+  document.getElementById('delName').textContent='"'+name+'"';
+  document.getElementById('delOverlay').classList.add('open');
+}
+function closeDelModal(){ document.getElementById('delOverlay').classList.remove('open'); _deleteId=''; }
+function confirmDelete(){
+  DB.saveTenants(DB.tenants().filter(x=>x.id!==_deleteId));
+  closeDelModal();
+  renderTable();
+  showToast('Tenant removed.','error');
+}
+ 
+/* ── CLOSE ON BACKDROP ── */
+['tenOverlay','viewOverlay','delOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){
+      if(id==='tenOverlay') closeModal();
+      else if(id==='viewOverlay') closeViewModal();
+      else closeDelModal();
+    }
+  });
+});
+ 
+/* ── INIT ── */
+populateFilterDropdown();
+renderTable();
+</script>
+</body>
+</html>

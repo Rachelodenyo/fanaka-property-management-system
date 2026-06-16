@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fanaka PMS – Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy:#0D1F3C; --navy-mid:#162B52; --navy-light:#1E3A6E;
+  --accent:#2563EB; --gold:#F59E0B; --success:#10B981;
+  --danger:#EF4444; --white:#FFFFFF;
+  --gray-50:#F8FAFC; --gray-100:#F1F5F9; --gray-200:#E2E8F0;
+  --gray-300:#CBD5E1; --gray-400:#94A3B8; --gray-500:#64748B;
+  --gray-600:#475569; --gray-700:#334155;
+  --radius:10px; --radius-lg:16px; --sidebar-w:252px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-50);color:var(--gray-700);min-height:100vh}
+ 
+/* ─ SIDEBAR (same across all pages) ─ */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-brand{padding:26px 22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:40px;height:40px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px}
+.brand-name{font-family:'DM Serif Display',serif;font-size:17px;color:var(--white);line-height:1.15;display:block}
+.brand-tag{font-size:10px;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase}
+.nav{flex:1;padding:14px 10px}
+.nav-section{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px 5px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.58);font-size:13.5px;font-weight:500;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:var(--accent);color:var(--white)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:9px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--white);flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10.5px;color:rgba(255,255,255,.38)}
+.btn-logout{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.35);padding:5px;border-radius:6px;transition:color .15s;line-height:0}
+.btn-logout:hover{color:var(--danger)}
+.btn-logout svg{width:16px;height:16px}
+ 
+/* ─ MAIN ─ */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--gray-200);height:66px;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:23px;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-date{font-size:13px;color:var(--gray-400)}
+.page{padding:30px 32px}
+ 
+/* ─ SECTION HEADER ─ */
+.section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.section-hd h2{font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy)}
+.section-hd p{font-size:13px;color:var(--gray-400);margin-top:3px}
+ 
+/* ─ TOOLBAR ─ */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;max-width:320px}
+.search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--gray-400);pointer-events:none}
+.search-box input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:13.5px;font-family:'DM Sans',sans-serif;background:var(--white);outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+ 
+select.filter{padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--gray-600);background:var(--white);outline:none;cursor:pointer}
+select.filter:focus{border-color:var(--accent)}
+ 
+/* ─ BUTTONS ─ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all .15s}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--navy);color:var(--white)}
+.btn-primary:hover{background:var(--navy-light);transform:translateY(-1px)}
+.btn-danger{background:var(--danger);color:var(--white)}
+.btn-danger:hover{background:#DC2626}
+.btn-outline{background:var(--white);color:var(--gray-600);border:1.5px solid var(--gray-200)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:12px}
+ 
+/* ─ CARD / TABLE ─ */
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden}
+.tbl-wrap{
+  overflow-x:auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{text-align:left;position: sticky;top: 0;z-index: 10;padding:10px 16px;font-size:10.5px;font-weight:600;color:var(--gray-600);letter-spacing:.08em;text-transform:uppercase;background:var(--gray-100);border-bottom:1px solid var(--gray-200)}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--gray-50)}
+tbody td{padding:13px 16px;color:var(--gray-600);vertical-align:middle}
+tbody td strong{color:var(--navy);font-weight:600}
+ 
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600}
+.pill-green{background:#F0FDF4;color:#166534}
+.pill-red{background:#FFF1F2;color:#991B1B}
+.pill-gold{background:#FFFBEB;color:#92400E}
+ 
+.actions-cell{display:flex;gap:6px}
+ 
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-400)}
+.empty-state svg{width:52px;height:52px;margin-bottom:14px;opacity:.3}
+.empty-state h4{font-size:16px;color:var(--gray-500);margin-bottom:6px}
+.empty-state p{font-size:13px}
+ 
+/* ─ MODAL ─ */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(13,31,60,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(13,31,60,.22);animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:24px 28px 18px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy)}
+.btn-close{width:32px;height:32px;background:var(--gray-100);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-500);font-size:20px;transition:background .15s}
+.btn-close:hover{background:var(--gray-200)}
+.modal-body{padding:22px 28px}
+.modal-footer{padding:16px 28px;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:10px}
+ 
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-full{grid-column:1/-1}
+.mform-group{margin-bottom:0}
+.mform-group label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px}
+.mform-group input,.mform-group select,.mform-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--gray-700);background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s}
+.mform-group input:focus,.mform-group select:focus,.mform-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.09)}
+.mform-group textarea{resize:vertical;min-height:70px}
+ 
+/* delete confirm */
+.del-modal{max-width:400px}
+.del-icon{width:56px;height:56px;background:#FFF1F2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.del-icon svg{width:26px;height:26px;color:var(--danger)}
+ 
+/* toast */
+.toast{position:fixed;bottom:26px;right:26px;z-index:500;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--white);box-shadow:0 8px 30px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+.toast.info{background:var(--navy)}
+ 
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.page{padding:20px 16px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+ 
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.552 20.552 21 20 21H4C3.448 21 3 20.552 3 20V9.5Z" fill="#0D1F3C"/><path d="M9 21V13H15V21" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div><span class="brand-name">Fanaka PMS</span><span class="brand-tag">Admin Portal</span></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <div class="nav-section">Management</div>
+    <a href="properties.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Properties
+    </a>
+    <a href="tenants.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Tenants
+    </a>
+    <a href="payments.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Rent Payments
+    </a>
+    <a href="leases.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Leases
+    </a>
+    <div class="nav-section">Reports</div>
+    <a href="reports.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Reports
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">AD</div>
+      <div class="user-info"><div class="user-name">Admin User</div><div class="user-role">System Administrator</div></div>
+      <button class="btn-logout" onclick="if(confirm('Sign out?'))location.href='login.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+ 
+<!-- ════ MAIN ════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Properties</div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="tbDate"></div>
+    </div>
+  </div>
+ 
+  <div class="page">
+    <!-- Header -->
+    <div class="section-hd">
+      <div>
+        <h2>Property Records</h2>
+        <p>Add, view, edit and delete managed properties</p>
+      </div>
+      <button class="btn btn-primary" onclick="openAdd()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Property
+      </button>
+    </div>
+ 
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name or location…" oninput="renderTable()"/>
+      </div>
+      <select class="filter" id="filterStatus" onchange="renderTable()">
+        <option value="">All Statuses</option>
+        <option>Occupied</option>
+        <option>Vacant</option>
+        <option>Partially Occupied</option>
+      </select>
+      <select class="filter" id="filterType" onchange="renderTable()">
+        <option value="">All Types</option>
+        <option>Apartment</option>
+        <option>Studio</option>
+        <option>Bedsitter</option>
+        <option>Maisonette</option>
+        <option>Commercial</option>
+      </select>
+    </div>
+ 
+    <!-- Table -->
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Property Name</th>
+              <th>Type</th>
+              <th>Location</th>
+              <th>Units</th>
+              <th>Rent / Month</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="propTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ════ ADD / EDIT MODAL ════ -->
+<div class="overlay" id="propOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add New Property</h3>
+      <button class="btn-close" onclick="closeModal()">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fId"/>
+      <div class="form-grid">
+ 
+        <div class="mform-group">
+          <label>Property Name *</label>
+          <input type="text" id="fName" placeholder="e.g. Sunrise Apartments"/>
+        </div>
+ 
+        <div class="mform-group">
+          <label>Property Type *</label>
+          <select id="fType">
+            <option value="">Select type…</option>
+            <option>Apartment</option>
+            <option>Studio</option>
+            <option>Bedsitter</option>
+            <option>Maisonette</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+ 
+        <div class="mform-group">
+          <label>Location *</label>
+          <input type="text" id="fLocation" placeholder="e.g. Westlands, Nairobi"/>
+        </div>
+ 
+        <div class="mform-group">
+          <label>Total Units</label>
+          <input type="number" id="fUnits" placeholder="e.g. 12" min="1"/>
+        </div>
+ 
+        <div class="mform-group">
+          <label>Monthly Rent (KES)</label>
+          <input type="number" id="fRent" placeholder="e.g. 18000" min="0"/>
+        </div>
+ 
+        <div class="mform-group">
+          <label>Occupancy Status</label>
+          <select id="fStatus">
+            <option value="Occupied">Occupied</option>
+            <option value="Vacant">Vacant</option>
+            <option value="Partially Occupied">Partially Occupied</option>
+          </select>
+        </div>
+ 
+        <div class="mform-group form-full">
+          <label>Description (optional)</label>
+          <textarea id="fDesc" placeholder="Brief description of the property, amenities, etc."></textarea>
+        </div>
+ 
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProperty()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Property
+      </button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ════ DELETE CONFIRM MODAL ════ -->
+<div class="overlay" id="delOverlay">
+  <div class="modal del-modal">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="btn-close" onclick="closeDelModal()">&#215;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding-top:28px">
+      <div class="del-icon" style="margin:0 auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      </div>
+      <h4 style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin:14px 0 8px">Delete Property?</h4>
+      <p style="font-size:13px;color:var(--gray-500);line-height:1.6">You are about to delete <strong id="delName"></strong>.<br>This action <strong>cannot</strong> be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDelModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+ 
+<script>
+/* ─── DATA LAYER ─── */
+const KEY = 'fpms_properties';
+ 
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+  catch(e) { return []; }
+}
+ 
+function save(data) {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+ 
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+ 
+/* ─── TOPBAR DATE ─── */
+document.getElementById('tbDate').textContent =
+  new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+ 
+/* ─── FORMAT CURRENCY ─── */
+function fmtKES(n) {
+  return 'KES ' + Number(n||0).toLocaleString('en-KE');
+}
+ 
+/* ─── TOAST ─── */
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(()=>{ t.className='toast '+type; }, 2800);
+}
+ /* ─── OCCUPANCY HELPER ─── */
+function getOccupiedCount(propertyName){
+  const tenants = JSON.parse(localStorage.getItem('fpms_tenants')) || [];
+  return tenants.filter(t => t.property === propertyName).length;
+}
+/* ─── STATUS LOGIC ─── */
+function getStatus(p){
+  const occupied = getOccupiedCount(p.name);
+  const units = Number(p.units || 0);
+
+  if (occupied === 0) return 'Vacant';
+  if (occupied < units) return 'Partially Occupied';
+  return 'Occupied';
+}
+function getOccupancyText(p){
+  const occupied = getOccupiedCount(p.name);
+  const units = Number(p.units || 0);
+
+  return occupied +'/' + units;
+}
+/* ─── RENDER TABLE ─── */
+function renderTable() {
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const st  = document.getElementById('filterStatus').value;
+  const tp  = document.getElementById('filterType').value;
+ 
+  let data = load().filter(p => {
+    const matchQ  = !q  || p.name.toLowerCase().includes(q) || p.location.toLowerCase().includes(q);
+    const matchSt = !st || getStatus=== st;
+    const matchTp = !tp || p.type   === tp;
+    return matchQ && matchSt && matchTp;
+  });
+ 
+  const tbody = document.getElementById('propTbody');
+ 
+  if (data.length === 0) {
+    tbody.innerHTML = `
+      <tr><td colspan="8">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <h4>No properties found</h4>
+          <p>Click "Add Property" to register your first property.</p>
+        </div>
+      </td></tr>`;
+    return;
+  }
+ 
+  tbody.innerHTML = data.map((p, i) => {
+    const status = getStatus(p);
+    const pillCls = 
+    status === 'Occupied' ? 'pill-green'
+                  : status === 'Vacant'   ? 'pill-red'
+                  : 'pill-gold';
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>
+          <strong>${p.name}</strong>
+          ${p.desc ? `<br><span style="font-size:11.5px;color:var(--gray-400)">${p.desc.slice(0,55)}${p.desc.length>55?'…':''}</span>` : ''}
+        </td>
+        <td>${p.type}</td>
+        <td>${p.location}</td>
+        <td style="text-align:center">${getOccupancyText(p)}</td>
+        <td style="font-weight:600;color:var(--navy)">${p.rent ? fmtKES(p.rent) : '—'}</td>
+        <td><span class="pill ${pillCls}">${status}</span></td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn btn-outline btn-sm" onclick="openEdit('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="askDelete('${p.id}','${p.name.replace(/'/g,"\\'")}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+ 
+/* ─── OPEN ADD ─── */
+function openAdd() {
+  document.getElementById('modalTitle').textContent = 'Add New Property';
+  clearForm();
+  document.getElementById('propOverlay').classList.add('open');
+}
+ 
+/* ─── OPEN EDIT ─── */
+function openEdit(id) {
+  const p = load().find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modalTitle').textContent = 'Edit Property';
+  document.getElementById('fId').value       = p.id;
+  document.getElementById('fName').value     = p.name;
+  document.getElementById('fType').value     = p.type;
+  document.getElementById('fLocation').value = p.location;
+  document.getElementById('fUnits').value    = p.units || '';
+  document.getElementById('fRent').value     = p.rent  || '';
+  document.getElementById('fStatus').value   = p.status;
+  document.getElementById('fDesc').value     = p.desc  || '';
+  document.getElementById('propOverlay').classList.add('open');
+}
+ 
+/* ─── CLOSE MODAL ─── */
+function closeModal() {
+  document.getElementById('propOverlay').classList.remove('open');
+  clearForm();
+}
+ 
+function clearForm() {
+  ['fId','fName','fLocation','fUnits','fRent','fDesc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fType').value   = '';
+  document.getElementById('fStatus').value = 'Occupied';
+}
+ 
+/* ─── SAVE PROPERTY (Create + Update) ─── */
+function saveProperty() {
+  const name     = document.getElementById('fName').value.trim();
+  const type     = document.getElementById('fType').value;
+  const location = document.getElementById('fLocation').value.trim();
+ 
+  // Validation
+  if (!name)     { showToast('Property name is required.', 'error');   return; }
+  if (!type)     { showToast('Please select a property type.', 'error'); return; }
+  if (!location) { showToast('Location is required.', 'error');         return; }
+ 
+  const existingId = document.getElementById('fId').value;
+  const data = load();
+ 
+  const record = {
+    id:       existingId || uid(),
+    name,
+    type,
+    location,
+    units:    document.getElementById('fUnits').value || 0,
+    rent:     document.getElementById('fRent').value  || 0,
+    desc:     document.getElementById('fDesc').value.trim(),
+    createdAt: existingId ? (data.find(x=>x.id===existingId)||{}).createdAt : new Date().toISOString(),
+  };
+ 
+  if (existingId) {
+    // UPDATE
+    const idx = data.findIndex(x => x.id === existingId);
+    data[idx] = record;
+    showToast(`"${name}" updated successfully.`, 'success');
+  } else {
+    // CREATE
+    data.push(record);
+    showToast(`"${name}" added successfully.`, 'success');
+  }
+ 
+  save(data);
+  closeModal();
+  renderTable();
+}
+ 
+/* ─── DELETE ─── */
+let _deleteId = '';
+ 
+function askDelete(id, name) {
+  _deleteId = id;
+  document.getElementById('delName').textContent = '"' + name + '"';
+  document.getElementById('delOverlay').classList.add('open');
+}
+ 
+function closeDelModal() {
+  document.getElementById('delOverlay').classList.remove('open');
+  _deleteId = '';
+}
+ 
+function confirmDelete() {
+  const data = load().filter(x => x.id !== _deleteId);
+  save(data);
+  closeDelModal();
+  renderTable();
+  showToast('Property deleted.', 'error');
+}
+ 
+/* ─── CLOSE OVERLAYS ON BACKDROP CLICK ─── */
+['propOverlay','delOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e){
+    if (e.target === this) {
+      id === 'propOverlay' ? closeModal() : closeDelModal();
+    }
+  });
+});
+ 
+/* ─── INIT ─── */
+renderTable();
+</script>
+</body>
+</html>
